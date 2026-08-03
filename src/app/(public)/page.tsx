@@ -1,3 +1,4 @@
+import { CtaSection } from "@/features/home/components/cta-section";
 import { FeaturedEventsSection } from "@/features/home/components/featured-events-section";
 import { HeroSection } from "@/features/home/components/hero-section";
 import { HowItWorksSection } from "@/features/home/components/how-it-works-section";
@@ -8,6 +9,7 @@ export default function HomePage() {
       <HeroSection />
       <FeaturedEventsSection />
       <HowItWorksSection />
+      <CtaSection />
     </>
   );
 }
