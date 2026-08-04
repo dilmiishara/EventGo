@@ -62,12 +62,14 @@ export async function Navbar() {
           <div className="ml-2 flex items-center gap-2 border-l border-gray-200 pl-4">
             {isAuthenticated ? (
               <>
-                <div
-                  title={user?.email ?? "Authenticated user"}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700"
-                >
-                  {userInitial}
-                </div>
+                <Link
+                    href="/account"
+                    title={user?.email ?? "Open account"}
+                    aria-label="Open my account"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700 transition hover:bg-violet-200"
+                    >
+                    {userInitial}
+                    </Link>
 
                 <LogoutButton />
               </>
