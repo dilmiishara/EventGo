@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { MobileMenu } from "@/components/layout/mobile-menu";
+import { createClient } from "@/lib/supabase/server";
+import { LogoutButton } from "@/features/auth/components/logout-button";
 
 const navigationLinks = [
   {
@@ -13,7 +15,17 @@ const navigationLinks = [
   },
 ];
 
-export function Navbar() {
+export async function Navbar() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isAuthenticated = Boolean(user);
+  const userInitial =
+    user?.email?.charAt(0).toUpperCase() ?? "U";
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
@@ -48,24 +60,42 @@ export function Navbar() {
           </nav>
 
           <div className="ml-2 flex items-center gap-2 border-l border-gray-200 pl-4">
-            <Link
-              href="/login"
-              className="rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-950"
-            >
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div
+                  title={user?.email ?? "Authenticated user"}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700"
+                >
+                  {userInitial}
+                </div>
 
-            <Link
-              href="/register"
-              className="rounded-xl bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-600"
-            >
-              Create Account
-            </Link>
+                <LogoutButton />
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-950"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="rounded-xl bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-600"
+                >
+                  Create Account
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
         <div className="ml-auto md:hidden">
-          <MobileMenu />
+          <MobileMenu
+            isAuthenticated={isAuthenticated}
+            userEmail={user?.email ?? null}
+          />
         </div>
       </div>
     </header>
