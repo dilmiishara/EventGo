@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { LogoutButton } from "@/features/auth/components/logout-button";
+
 const navigationLinks = [
   {
     label: "Events",
@@ -14,7 +16,15 @@ const navigationLinks = [
   },
 ];
 
-export function MobileMenu() {
+type MobileMenuProps = {
+  isAuthenticated: boolean;
+  userEmail: string | null;
+};
+
+export function MobileMenu({
+  isAuthenticated,
+  userEmail,
+}: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   function closeMenu() {
@@ -58,7 +68,7 @@ export function MobileMenu() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-[100] md:hidden"
+          className="fixed inset-0 z-[150] md:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
@@ -67,70 +77,112 @@ export function MobileMenu() {
             type="button"
             onClick={closeMenu}
             aria-label="Close navigation menu"
-            className="absolute inset-0 bg-gray-950/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-gray-950/70 backdrop-blur-md"
           />
 
           <aside
             id="mobile-navigation"
-            className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col bg-white shadow-2xl"
-          >
-            <div className="flex h-[72px] items-center justify-between border-b border-gray-200 px-5">
-              <Link
-                href="/"
-                onClick={closeMenu}
-                className="inline-flex items-center gap-3"
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-sm font-bold text-white shadow-lg shadow-violet-500/20">
-                  EG
-                </span>
+            className="absolute right-0 top-0 z-10 flex max-h-[92dvh] w-[min(88vw,380px)] flex-col overflow-hidden rounded-bl-3xl border-b border-l border-violet-400/20 bg-[#111827] text-white shadow-2xl"
+            style={{
+                backgroundColor: "#111827",
+            }}
+            >
+            <div className="flex h-[76px] shrink-0 items-center justify-between border-b border-white/10 bg-[#172033] px-5">
+                <Link
+                    href="/"
+                    onClick={closeMenu}
+                    className="inline-flex items-center gap-3"
+                    aria-label="EventGo homepage"
+                >
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-sm font-bold text-white shadow-lg shadow-violet-500/20">
+                    EG
+                    </span>
 
-                <span className="text-xl font-bold tracking-tight text-gray-950">
-                  Event<span className="text-violet-600">Go</span>
-                </span>
-              </Link>
+                    <span className="text-xl font-bold tracking-tight text-white">
+                    Event<span className="text-violet-400">Go</span>
+                    </span>
+                </Link>
 
-              <button
-                type="button"
-                onClick={closeMenu}
-                aria-label="Close navigation menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-700 transition hover:bg-gray-100 hover:text-gray-950"
-              >
-                <CloseIcon />
-              </button>
-            </div>
+                <button
+                    type="button"
+                    onClick={closeMenu}
+                    aria-label="Close navigation menu"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-gray-200 transition hover:bg-white/20 hover:text-white"
+                >
+                    <CloseIcon />
+                </button>
+                </div>
 
-            <nav className="flex flex-1 flex-col px-5 py-6">
+            <nav className="flex flex-col overflow-y-auto bg-gradient-to-b from-[#111827] via-[#0f172a] to-[#080d19] px-5 py-6">
+              <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
+                Navigation
+              </p>
+
               <ul className="space-y-2">
                 {navigationLinks.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       onClick={closeMenu}
-                      className="flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold text-gray-700 transition hover:bg-violet-50 hover:text-violet-700"
+                      className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 text-base font-semibold text-white shadow-sm transition hover:border-violet-400/40 hover:bg-violet-500/20"
                     >
                       {link.label}
-                      <span aria-hidden="true">→</span>
+
+                      <span
+                        aria-hidden="true"
+                        className="text-gray-500 transition group-hover:translate-x-1 group-hover:text-violet-300"
+                      >
+                        →
+                      </span>
                     </Link>
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-auto space-y-3 border-t border-gray-200 pt-6">
-                <Link
-                  href="/login"
-                  onClick={closeMenu}
-                  className="flex w-full items-center justify-center rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 transition hover:border-gray-950 hover:bg-gray-100"
-                >
-                  Login
-                </Link>
+              <div className="mt-8 border-t border-white/10 pt-6">
+                {isAuthenticated ? (
+                  <div className="space-y-4">
+                    {userEmail && (
+                      <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet-500 text-sm font-bold text-white">
+                            {userEmail.charAt(0).toUpperCase()}
+                          </div>
 
-                <Link
-                  href="/register"
-                  onClick={closeMenu}
-                  className="flex w-full items-center justify-center rounded-xl bg-gray-950 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-violet-600"
-                >
-                  Create Account
-                </Link>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-violet-300">
+                              Signed in as
+                            </p>
+
+                            <p className="mt-1 truncate text-sm font-semibold text-white">
+                              {userEmail}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <LogoutButton fullWidth />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <Link
+                      href="/login"
+                      onClick={closeMenu}
+                      className="flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                    >
+                      Login
+                    </Link>
+
+                    <Link
+                      href="/register"
+                      onClick={closeMenu}
+                      className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:from-violet-500 hover:to-fuchsia-400"
+                    >
+                      Create Account
+                    </Link>
+                  </div>
+                )}
               </div>
             </nav>
           </aside>
